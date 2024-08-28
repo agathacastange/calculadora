@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Energética</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Calculadora Energética</h1>
+        <p class="subheader">SENAI</p>
+    </div>
+    <div class="container">
+        <div class="form-group">
+            <label for="ambiente">Ambiente da Casa:</label>
+            <select id="ambiente" onchange="atualizarEletrodomesticos()">
+                <option value="sala">Sala</option>
+                <option value="cozinha">Cozinha</option>
+                <option value="quarto">Quarto</option>
+                <option value="banheiro">Banheiro</option>
+                <option value="area_servico">Área de Serviço</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="eletrodomestico">Eletrodoméstico:</label>
+            <select id="eletrodomestico">
+                <!-- Aparelhos serão inseridos aqui pelo JavaScript -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="horas">Horas de uso por dia:</label>
+            <input type="number" id="horas" min="0" max="24">
+        </div>
+
+        <div class="form-group">
+            <label for="dias">Dias de uso por mês:</label> 
+            <input type="number" id="dias" min="0" max="31">
+        </div>
+
+        <button onclick="calcular()">Calcular Consumo</button>
+        
+        <div id="resultado"></div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        const aparelhos = {
+            sala: [
+                { nome: 'Televisão', valor: 0.1 },
+                { nome: 'Home Theater', valor: 0.2 },
+                { nome: 'Ventilador', valor: 0.05 },
+                { nome: 'Lâmpada LED', valor: 0.01 },
+                { nome: 'Tomada', valor: 0.005 } // Consumo médio de uma tomada sem carga
+            ],
+            cozinha: [
+                { nome: 'Geladeira', valor: 0.15 },
+                { nome: 'Micro-ondas', valor: 1.5 },
+                { nome: 'Fogão Elétrico', valor: 1.5 },
+                { nome: 'Cafeteira Elétrica', valor: 0.9 },
+                { nome: 'Torradeira', valor: 0.8 },
+                { nome: 'Lâmpada LED', valor: 0.01 },
+                { nome: 'Tomada', valor: 0.005 }
+            ],
+            quarto: [
+                { nome: 'Computador', valor: 0.08 },
+                { nome: 'Ar-condicionado', valor: 1.2 },
+                { nome: 'Secador de Cabelo', valor: 1.5 },
+                { nome: 'Lâmpada LED', valor: 0.01 },
+                { nome: 'Tomada', valor: 0.005 }
+            ],
+            banheiro: [
+                { nome: 'Chuveiro Elétrico', valor: 5.5 },
+                { nome: 'Lâmpada LED', valor: 0.01 },
+                { nome: 'Tomada', valor: 0.005 }
+            ],
+            area_servico: [
+                { nome: 'Máquina de Lavar Roupa', valor: 0.5 },
+                { nome: 'Lava e Seca', valor: 1.0 },
+                { nome: 'Aspirador de Pó', valor: 0.8 },
+                { nome: 'Lâmpada LED', valor: 0.01 },
+                { nome: 'Tomada', valor: 0.005 }
+            ]
+        };
+
+        function atualizarEletrodomesticos() {
+            const ambiente = document.getElementById('ambiente').value;
+            const eletrodomesticoSelect = document.getElementById('eletrodomestico');
+            eletrodomesticoSelect.innerHTML = '';
+
+            aparelhos[ambiente].forEach(aparelho => {
+                const option = document.createElement('option');
+                option.value = aparelho.valor; // Usando o valor do consumo
+                option.textContent = `${aparelho.nome} (${aparelho.valor} kWh)`;
+                eletrodomesticoSelect.appendChild(option);
+            });
+        }
+
+        function calcular() {
+            const valorEletrodomestico = parseFloat(document.getElementById('eletrodomestico').value);
+            const horas = parseFloat(document.getElementById('horas').value);
+            const dias = parseFloat(document.getElementById('dias').value);
+
+            if (isNaN(valorEletrodomestico) || isNaN(horas) || isNaN(dias)) {
+                alert('Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+
+            const consumoDiario = valorEletrodomestico * horas;
+            const consumoMensal = consumoDiario * dias;
+
+            document.getElementById('resultado').innerHTML = `
+                <h3>Resultado:</h3>
+                <p>Consumo Diário: ${consumoDiario.toFixed(2)} kWh</p>
+                <p>Consumo Mensal: ${consumoMensal.toFixed(2)} kWh</p>
+            `;
+        }
+
+        // Inicializa o select com os aparelhos do primeiro ambiente
+        atualizarEletrodomesticos();
+    </script>
+</body>
+</html>
